@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout Page</title>
+</head>
+<body style="text-align:center; padding-top:100px; font-family:sans-serif;">
+  <h1>Checkout Page</h1>
+  
+  <div id="payment-section">
+      <button id="payBtn" onclick="pay()" style="padding:15px 30px; font-size:20px; cursor:pointer; background-color: #2ecc71; color: white; border: none; border-radius: 5px;">
+        Confirm & Pay Now
+      </button>
+  </div>
+
+  <div id="success-section" style="display:none;">
+      <h2 style="color:green;">✅ Payment Successful!</h2>
+      <p>Your dashboard has been updated.</p>
+  </div>
+
+  <script>
+    async function pay() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const order_id = urlParams.get('order_id');
+      
+      if (!order_id) {
+          return alert("Error: No Order ID found in URL. Please create an order first.");
+      }
+
+      try {
+        const response = await fetch('http://localhost:8000/api/v1/payments', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ order_id })
+        });
+
+        if (response.ok) {
+          // Hide button and show the clean success message
+          document.getElementById('payment-section').style.display = 'none';
+          document.getElementById('success-section').style.display = 'block';
+        } else {
+          alert("Payment failed. Please check the backend.");
+        }
+      } catch (err) {
+        console.error("Payment Error:", err);
+        alert("Connection lost. Is the Backend Online?");
+      }
+    }
+  </script>
+</body>
+</html>

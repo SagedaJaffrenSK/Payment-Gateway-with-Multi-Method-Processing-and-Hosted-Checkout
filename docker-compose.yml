@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: pg_gateway
+    environment:
+      POSTGRES_USER: gateway_user
+      POSTGRES_PASSWORD: gateway_password
+      POSTGRES_DB: payment_gateway
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./backend
+    container_name: gateway_api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://gateway_user:gateway_password@postgres:5432/payment_gateway
+    depends_on:
+      - postgres
+
+  frontend:
+    image: nginx:alpine
+    container_name: checkout_ui
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    ports:
+      - "3001:80"
+
+  # ADD THIS SERVICE TO FIX THE 403 ERROR
+  dashboard:
+    image: nginx:alpine
+    container_name: merchant_dashboard
+    volumes:
+      - ./dashboard_html:/usr/share/nginx/html:ro
+    ports:
+      - "3000:80"

@@ -89,7 +89,7 @@ The database is automatically seeded with a test merchant. Use the following cre
 - Payment status polling
 
 - Dashboard
-http://localhost:3000/login
+http://localhost:3000
 
 
 # Features:
